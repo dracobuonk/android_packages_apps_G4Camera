@@ -361,15 +361,19 @@ public class CameraController1 extends CameraController {
 		String default_value = getDefaultISO();
     	Camera.Parameters parameters = this.getParameters();
 		// get available isos - no standard value for this, see http://stackoverflow.com/questions/2978095/android-camera-api-iso-setting
-		String iso_values = parameters.get("iso-values");
-		if( iso_values == null ) {
-			iso_values = parameters.get("iso-mode-values"); // Galaxy Nexus
-			if( iso_values == null ) {
-				iso_values = parameters.get("iso-speed-values"); // Micromax A101
-				if( iso_values == null )
-					iso_values = parameters.get("nv-picture-iso-values"); // LG dual P990
-			}
-		}
+		String iso_values = parameters.get("lg-iso-values"); // LG G4
+        if( iso_values == null ) {
+            iso_values = parameters.get("iso-mode-values"); // Galaxy Nexus
+            if( iso_values == null ) {
+                iso_values = parameters.get("iso-speed-values"); // Micromax A101
+                if( iso_values == null ) {
+                    iso_values = parameters.get("iso-values"); // Default
+                    if( iso_values == null ) {
+                        iso_values = parameters.get("nv-picture-iso-values"); // LG dual P990
+                    }
+                }
+            }
+        }
 		List<String> values = null;
 		if( iso_values != null && iso_values.length() > 0 ) {
 			if( MyDebug.LOG )
@@ -383,15 +387,19 @@ public class CameraController1 extends CameraController {
 			}
 		}
 
-		iso_key = "iso";
-		if( parameters.get(iso_key) == null ) {
-			iso_key = "iso-speed"; // Micromax A101
-			if( parameters.get(iso_key) == null ) {
-				iso_key = "nv-picture-iso"; // LG dual P990
-				if( parameters.get(iso_key) == null )
-					iso_key = null; // not supported
-			}
-		}
+		iso_key = "lg-iso"; // LG G4
+        if( parameters.get(iso_key) == null ) {
+            iso_key = "iso-speed"; // Micromax A101
+            if( parameters.get(iso_key) == null ) {
+                iso_key = "nv-picture-iso"; // LG dual P990
+                if( parameters.get(iso_key) == null ) {
+                    iso_key = "iso"; // Default
+                    if( parameters.get(iso_key) == null ) {
+                        iso_key = null; // not supported
+                    }
+                }
+            }
+        }
 		/*values = new ArrayList<String>();
 		//values.add("auto");
 		//values.add("ISO_HJR");
