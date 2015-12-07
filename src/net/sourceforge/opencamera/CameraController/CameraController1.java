@@ -79,6 +79,7 @@ public class CameraController1 extends CameraController {
                 Log.d(TAG, "LGE Camera");
             Camera.Parameters parameters = this.getParameters();
             parameters.set("lge-camera", 1);
+            parameters.set("zsl", "on");
             setCameraParameters(parameters);
         }
 		/*{
@@ -285,7 +286,7 @@ public class CameraController1 extends CameraController {
 			camera_features.preview_sizes.add(new CameraController.Size(camera_size.width, camera_size.height));
 		}
 
-		if( MyDebug.LOG )
+		if( MyDebug.LOG_PARAMS )
 			Log.d(TAG, "camera parameters: " + parameters.flatten());
 
 		if( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 ) {
@@ -310,8 +311,9 @@ public class CameraController1 extends CameraController {
 	// scene mode, both flash mode and supported flash mode may be changed to off. After setting scene
 	// mode, applications should call getParameters to know if some parameters are changed."
 	public SupportedValues setSceneMode(String value) {
+        Camera.Parameters parameters = this.getParameters();
 		String default_value = getDefaultSceneMode();
-    	Camera.Parameters parameters = this.getParameters();
+    	
 		List<String> values = parameters.getSupportedSceneModes();
 		/*{
 			// test
@@ -321,7 +323,14 @@ public class CameraController1 extends CameraController {
 		SupportedValues supported_values = checkModeIsSupported(values, value, default_value);
 		if( supported_values != null ) {
 			if( !parameters.getSceneMode().equals(supported_values.selected_value) ) {
-	        	parameters.setSceneMode(supported_values.selected_value);
+                // LG G4 HDR mode
+                if (value.equals("hdr")) {
+                    Log.d(TAG, "LGE HDR mode");
+                    parameters.set("hdr-mode", 1);
+                } else {
+                    parameters.set("hdr-mode", 0);
+                }
+                parameters.setSceneMode(supported_values.selected_value);
 	        	setCameraParameters(parameters);
 			}
 		}
