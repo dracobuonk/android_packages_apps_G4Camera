@@ -59,6 +59,13 @@ public class CameraController1 extends CameraController {
 			this.release();
 			throw new CameraControllerException();
 		}
+        {
+            if( MyDebug.LOG )
+                Log.d(TAG, "LGE Camera");
+            Camera.Parameters parameters = this.getParameters();
+            parameters.set("lge-camera", 1);
+            setCameraParameters(parameters);
+        }
 		/*{
 			// TEST cam_mode workaround from http://stackoverflow.com/questions/7225571/camcorderprofile-quality-high-resolution-produces-green-flickering-video
 			if( MyDebug.LOG )
