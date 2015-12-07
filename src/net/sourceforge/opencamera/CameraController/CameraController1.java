@@ -28,17 +28,32 @@ public class CameraController1 extends CameraController {
 
 	public CameraController1(int cameraId) throws CameraControllerException {
 		super(cameraId);
+
 		if( MyDebug.LOG )
 			Log.d(TAG, "create new CameraController1: " + cameraId);
-		try {
-			camera = Camera.open(cameraId);
-		}
-		catch(RuntimeException e) {
-			if( MyDebug.LOG )
-				Log.e(TAG, "failed to open camera");
-			e.printStackTrace();
+
+        try {
+            camera = Camera.openLegacy(cameraId, android.hardware.Camera.CAMERA_HAL_API_VERSION_1_0);
+        } catch (RuntimeException e) {
+            if( MyDebug.LOG )
+				Log.e(TAG, "failed to open camera in legacy mode");
+            e.printStackTrace();
 			throw new CameraControllerException();
-		}
+        }
+
+        /* Retry with open if openLegacy fails */
+        if( camera == null ) {
+            try {
+                Log.v(TAG, "openLegacy failed. Using open instead");
+                camera = Camera.open(cameraId);
+            } catch(RuntimeException e) {
+                if( MyDebug.LOG )
+                    Log.e(TAG, "failed to open camera");
+                e.printStackTrace();
+                throw new CameraControllerException();
+            }
+        }
+
 		if( camera == null ) {
 			// Although the documentation says Camera.open() should throw a RuntimeException, it seems that it some cases it can return null
 			// I've seen this in some crashes reported in Google Play; also see:
