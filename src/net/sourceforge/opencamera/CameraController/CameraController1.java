@@ -161,6 +161,7 @@ public class CameraController1 extends CameraController {
 		if( MyDebug.LOG )
 			Log.d(TAG, "convertFocusModesToValues()");
 		List<String> output_modes = new Vector<String>();
+
 		if( supported_focus_modes != null ) {
 			// also resort as well as converting
 			if( supported_focus_modes.contains(Camera.Parameters.FOCUS_MODE_AUTO) ) {
@@ -194,6 +195,16 @@ public class CameraController1 extends CameraController {
 				output_modes.add("focus_mode_edof");
 				if( MyDebug.LOG )
 					Log.d(TAG, " supports focus_mode_edof");
+			}
+			if( supported_focus_modes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) ) {
+				output_modes.add("focus_mode_continuous_picture");
+				if( MyDebug.LOG )
+					Log.d(TAG, " supports focus_mode_continuous_picture");
+			}
+			if( supported_focus_modes.contains("mw_continuous-picture") ) {
+				output_modes.add("focus_mode_mw_continuous_picture");
+				if( MyDebug.LOG )
+					Log.d(TAG, " supports focus_mode_mw_continuous_picture");
 			}
 			if( supported_focus_modes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) {
 				output_modes.add("focus_mode_continuous_video");
@@ -404,9 +415,19 @@ public class CameraController1 extends CameraController {
 				Log.d(TAG, "iso_values: " + iso_values);
 			String [] isos_array = iso_values.split(",");					
 			if( isos_array != null && isos_array.length > 0 ) {
-				values = new ArrayList<String>();				
+				values = new ArrayList<String>();
+                
+                boolean iso_auto_added = false;
 				for(int i=0;i< isos_array.length;i++) {
-					values.add(isos_array[i]);
+                    // avoid duplicate auto entries
+                    if(isos_array[i].equals("auto")) {
+                        if(iso_auto_added == false) {
+                            values.add(isos_array[i]);
+                        }
+                        iso_auto_added = true;
+                    } else {
+                        values.add(isos_array[i]);
+                    }
 				}
 			}
 		}
@@ -637,6 +658,12 @@ public class CameraController1 extends CameraController {
     	else if( focus_value.equals("focus_mode_edof") ) {
     		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_EDOF);
     	}
+        else if( focus_value.equals("focus_mode_continuous_picture") ) {
+    		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+    	}
+        else if( focus_value.equals("focus_mode_mw_continuous_picture") ) {
+    		parameters.setFocusMode("mw_continuous-picture");
+    	}
     	else if( focus_value.equals("focus_mode_continuous_video") ) {
     		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
     	}
@@ -669,6 +696,12 @@ public class CameraController1 extends CameraController {
     	}
 		else if( focus_mode.equals(Camera.Parameters.FOCUS_MODE_EDOF) ) {
     		focus_value = "focus_mode_edof";
+    	}
+        else if( focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) ) {
+    		focus_value = "focus_mode_continuous_picture";
+    	}
+        else if( focus_mode.equals("mw_continuous-picture") ) {
+    		focus_value = "focus_mode_mw_continuous_picture";
     	}
 		else if( focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) {
     		focus_value = "focus_mode_continuous_video";
@@ -867,7 +900,7 @@ public class CameraController1 extends CameraController {
         Camera.Parameters parameters = this.getParameters();
 		String focus_mode = parameters.getFocusMode();
 		// getFocusMode() is documented as never returning null, however I've had null pointer exceptions reported in Google Play
-        if( parameters.getMaxNumFocusAreas() != 0 && focus_mode != null && ( focus_mode.equals(Camera.Parameters.FOCUS_MODE_AUTO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_MACRO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) ) {
+        if( parameters.getMaxNumFocusAreas() != 0 && focus_mode != null && ( focus_mode.equals(Camera.Parameters.FOCUS_MODE_AUTO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_MACRO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) || focus_mode.equals("mw_continuous-picture") || focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) ) {
 		    parameters.setFocusAreas(camera_areas);
 
 		    // also set metering areas
