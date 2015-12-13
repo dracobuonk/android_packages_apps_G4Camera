@@ -205,6 +205,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	private static final int FOCUS_FAILED = 2;
 	private static final int FOCUS_DONE = 3;
 	private String set_flash_value_after_autofocus = "";
+    private boolean set_mw_continuous_picture_after_autofocus = false;
 	private boolean take_photo_after_autofocus = false;
 	private boolean successfully_focused = false;
 	private long successfully_focused_time = -1;
@@ -3764,6 +3765,14 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		else {
 			// it's only worth doing autofocus when autofocus has an effect (i.e., auto or macro mode)
 	        if( camera_controller.supportsAutoFocus() ) {
+
+				if (getCurrentFocusValue().equals("focus_mode_mw_continuous_picture")) {
+					if( MyDebug.LOG )
+						Log.d(TAG, "switch to autofocus mode");
+                    camera_controller.setFocusValue("focus_mode_auto");
+					set_mw_continuous_picture_after_autofocus = true;
+				}
+
 				if( MyDebug.LOG )
 					Log.d(TAG, "try to start autofocus");
 				if( !using_android_l ) {
@@ -3783,6 +3792,14 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 						if( MyDebug.LOG )
 							Log.d(TAG, "autofocus complete: " + success);
 						autoFocusCompleted(manual, success, false);
+                        
+						if (set_mw_continuous_picture_after_autofocus) {
+							if( MyDebug.LOG )
+								Log.d(TAG, "switch back to mw_continuous-picture mode");
+                            camera_controller.setFocusValue("focus_mode_mw_continuous_picture");
+                            set_mw_continuous_picture_after_autofocus = false;
+						}
+
 					}
 		        };
 	
