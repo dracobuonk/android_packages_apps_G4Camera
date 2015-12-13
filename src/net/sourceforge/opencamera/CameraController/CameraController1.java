@@ -32,13 +32,15 @@ public class CameraController1 extends CameraController {
 		if( MyDebug.LOG )
 			Log.d(TAG, "create new CameraController1: " + cameraId);
 
-        try {
-            camera = Camera.openLegacy(cameraId, android.hardware.Camera.CAMERA_HAL_API_VERSION_1_0);
-        } catch (RuntimeException e) {
-            if( MyDebug.LOG )
-				Log.e(TAG, "failed to open camera in legacy mode");
-            e.printStackTrace();
-			throw new CameraControllerException();
+        if ( cameraId != 1) {
+            try {
+                camera = Camera.openLegacy(cameraId, android.hardware.Camera.CAMERA_HAL_API_VERSION_1_0);
+            } catch (RuntimeException e) {
+                if( MyDebug.LOG )
+                    Log.e(TAG, "failed to open camera in legacy mode");
+                e.printStackTrace();
+                throw new CameraControllerException();
+            }
         }
 
         /* Retry with open if openLegacy fails */
