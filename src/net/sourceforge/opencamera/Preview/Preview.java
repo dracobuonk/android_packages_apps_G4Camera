@@ -2742,7 +2742,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		else {
 			if( MyDebug.LOG )
 				Log.d(TAG, "found no existing focus_value");
-			updateFocus(is_video ? "focus_mode_continuous_video" : "focus_mode_continuous_picture", true, true, auto_focus);
+			updateFocus(is_video ? "focus_mode_continuous_video" : "focus_mode_mw_continuous_picture", true, true, auto_focus);
 		}
 	}
 
@@ -2757,7 +2757,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			if( focus_is_video != is_video ) {
 				if( MyDebug.LOG )
 					Log.d(TAG, "need to change focus mode");
-				updateFocus(is_video ? "focus_mode_continuous_video" : "focus_mode_continuous_picture", true, true, auto_focus);
+				updateFocus(is_video ? "focus_mode_continuous_video" : "focus_mode_mw_continuous_picture", true, true, auto_focus);
 			}
 		}
 	}
